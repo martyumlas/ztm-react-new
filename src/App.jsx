@@ -1,9 +1,9 @@
-import './App.css'
-import CategoryItem from './components/CategoryItem'
+import Categories from './components/Categories'
 
 function App() {
 
-  const categories = [
+  const categories =
+  [
     {
       "id": 1,
       "title": "hats",
@@ -32,12 +32,7 @@ function App() {
   ]
   
   return (
-    <div className="categories-container">
-      {categories.map((category) => (
-        <CategoryItem key={category.id} category={category} />
-      ))}
-      
-    </div>
+    <Categories categories={categories}/>
   )
 }
 
