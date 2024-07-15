@@ -1,26 +1,55 @@
-import firebase from 'firebase/compat/app';
 import { auth } from '../../config/firebase/firebase';
-import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { signInWithEmailAndPassword, signInWithPopup} from 'firebase/auth';
 
 const Login = () => {// Initialize the FirebaseUI Widget using Firebase.
 
-  useEffect(() => {
+  const [credentials, setCredentials] = useState({
+    'email' :'',
+    'password' : ''
+  })
 
-    
-    const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
-    ui.start('#firebaseui-auth-container', {
-      signInOptions: [
-        firebase.auth.EmailAuthProvider.PROVIDER_ID
-      ],
-  
-    
+  const handleChange = (e) => {
+    const {id, value} = e.target
+    setCredentials(prev => ({...prev , [id] : value}))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const {email, password} = credentials
+   await signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      console.log(user)
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(error)
     });
-  }, [])
+  }
 
   return (
-    <div id="firebaseui-auth-container"></div>
+    <>
+      <h1>Login</h1>
+      <form onSubmit={handleSubmit} >
+      <div>
+        <label htmlFor="email">Email</label>
+        <input type='email' id='email' value={credentials.email} required onChange={handleChange}/>
+      </div>
+      <div>
+        <label htmlFor="password">Password</label>
+        <input type='password' id='password' required onChange={(e) => {
+          setCredentials(prev => ({...prev, password: e.target.value}))
+        }}/>
+      </div>
+      <div>
+        <button type='submit' >Login</button>
+      </div>
+      </form>
+    </>
   )
 }
 
